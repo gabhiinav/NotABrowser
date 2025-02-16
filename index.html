@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>NotABrowser</title>
+  <!-- Link to Bootstrap for styling -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    /* Custom styling to ensure the webview fills the remaining space */
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+    #webview-container {
+      height: calc(100% - 56px); /* Adjust if your navbar height changes */
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">My Browser</a>
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav mr-auto">
+        <!-- Back and Forward buttons -->
+        <li class="nav-item">
+          <button class="btn btn-outline-secondary mr-2" onclick="navigateBack()">Back</button>
+        </li>
+        <li class="nav-item">
+          <button class="btn btn-outline-secondary mr-2" onclick="navigateForward()">Forward</button>
+        </li>
+        <li class="nav-item">
+          <button class="btn btn-outline-primary" onclick="navigateHome()">Home</button>
+        </li>
+      </ul>
+      <!-- An example address bar -->
+      <form class="form-inline" onsubmit="navigateToUrl(event)">
+        <input id="urlInput" class="form-control mr-sm-2" type="search" placeholder="Enter URL" aria-label="Search">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Go</button>
+      </form>
+    </div>
+  </nav>
+
+  <!-- Webview Container -->
+  <div id="webview-container">
+    <!-- The webview tag will render your browser content -->
+    <webview id="webview" src="https://www.example.com" style="width:100%; height:100%;"></webview>
+  </div>
+
+  <script>
+    const webview = document.getElementById('webview');
+    const urlInput = document.getElementById('urlInput');
+
+    function navigateHome() {
+      webview.loadURL('https://www.example.com');
+      urlInput.value = 'https://www.example.com';
+    }
+
+    function navigateBack() {
+      if (webview.canGoBack()) {
+        webview.goBack();
+      }
+    }
+
+    function navigateForward() {
+      if (webview.canGoForward()) {
+        webview.goForward();
+      }
+    }
+
+    function navigateToUrl(event) {
+      event.preventDefault();
+      let url = urlInput.value.trim();
+      // Simple URL validation: if no protocol is provided, default to http://
+      if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        url = 'http://' + url;
+      }
+      webview.loadURL(url);
+    }
+
+    // Update the URL input when the webview navigates
+    webview.addEventListener('did-navigate', (event) => {
+      urlInput.value = event.url;
+    });
+  </script>
+</body>
+</html>
